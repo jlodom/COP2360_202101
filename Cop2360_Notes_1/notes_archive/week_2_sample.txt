@@ -1,0 +1,96 @@
+﻿/* Sample code from Week 2 by Johnnie Odom */
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+
+namespace Cop2360_Notes_1 {
+	class Program {
+		static void Main(string[] args) {
+
+			/* Fixed paths are bad, and this should be read from arguments or a config file. 
+			 * But for tonight, this will do. */
+			String stringPathToFile = "C:\\YOURPATHGOESHERE";
+			/* Make sure the file exists before proceeding. */
+			if(File.Exists(stringPathToFile)) {
+				String stringEntireText = File.ReadAllText(stringPathToFile); /* Read the whole file into memory as a string (could go line by line. */
+				String stringNewLine = "\r\n"; /* Force using Windows newline instead of Environment.NewLine */
+				Char charDelimiter = '\t'; /* This file uses tabs, but we could change this variable if other files use other delimiters */
+				String[] arrayStringLines = stringEntireText.Split(stringNewLine); /* Convert the big string into an array of rows */
+				/* Create some more variables we will need. */
+				int lineNumber = 0;
+				List<String> listStringHeader = new List<String>();
+				List<OrderedDictionary> listOrdicRows = new List<OrderedDictionary>();
+				/* Go through every line/row and process appropriately. */
+				foreach(String stringLine in arrayStringLines) {
+					lineNumber++;
+					/* If a line is blank, do not do anything with it. */
+					if(String.IsNullOrWhiteSpace(stringLine)) {
+						Console.WriteLine("Blank Line");
+					}
+					else {
+						/* Create a list to holding header information if this is the first line (the header). */
+						if(lineNumber == 1) {
+							String[] arrayStringTempHeader = stringLine.Split(charDelimiter);
+							foreach(String stringHeaderColumn in arrayStringTempHeader) {
+								listStringHeader.Add(stringHeaderColumn.Replace(' ','_').Replace('/','_').Trim().ToLower());
+								/* We can dice the header string a lot in just one line (above). */
+							}
+						}
+						/* If this is not the first line, treat it like a data row. */
+						else {
+							String[] arrayStringTempROw = stringLine.Split(charDelimiter);
+							OrderedDictionary ordicRow = new OrderedDictionary();
+							for(int i = 0; i < listStringHeader.Count; i++) {
+								ordicRow.Add(listStringHeader[i], arrayStringTempROw[i]);
+								/* (Above) Add each column in the row to an ordered dictionary keyed to its header name. 
+								 We can look up this column data in the future either by its order by its header name. */
+							}
+							listOrdicRows.Add(ordicRow);
+						}
+					}
+				}
+				/* This is just one example of using the data 
+				 * Go through all the rows and get a count of the City, State, Zip entries. */
+				Dictionary<String, int> dicZipCount = new Dictionary<string, int>();
+				foreach(OrderedDictionary ordic in listOrdicRows) {
+					String stringZip = ordic["city_state_zip"].ToString();
+					/* If we have not seen this entry before, add it to the dictionary. */
+					if(dicZipCount.ContainsKey(stringZip)) {
+						dicZipCount[stringZip]++;
+					}
+					/* If we have seen it before, just add one to the appropriate dictionary entry. */
+					else {
+						dicZipCount.Add(stringZip, 1);
+					}
+				}
+				/* Now go through the dictionary and print out the data. */
+				foreach(KeyValuePair<String, int> kvp in dicZipCount) {
+					/* We only want interesting data, so only print if the City, State, Zip shows up more than 4 times. */
+					if(kvp.Value > 4) {
+						Console.WriteLine("City, State, Zip: " + kvp.Key + " has " + kvp.Value + " donations");
+					}
+				}
+				/* End data use example */
+
+			}
+			else {
+				Console.WriteLine("Could not find file: " + stringPathToFile);
+			}
+
+
+			
+			// This is a comment.
+			/* This is also a comment. */
+
+			/* Old Code 
+			String stringFullName = args[0];
+
+			String[] arrayStringTheSplit = stringFullName.Split(" ");
+
+			Console.WriteLine(arrayStringTheSplit[1] + ", " + arrayStringTheSplit[0]);
+			*/
+		}
+	}
+}
