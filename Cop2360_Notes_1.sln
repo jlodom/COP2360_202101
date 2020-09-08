@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cop2360_Notes_1", "Cop2360_Notes_1\Cop2360_Notes_1.csproj", "{5E337EB7-85E8-4B8B-BA28-5B1541F4FE68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NWFCampaignLib", "NWFCampaignLib\NWFCampaignLib.csproj", "{3641674F-D6C3-48E3-A575-5B632A9CFD1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,5 +15,9 @@ Global
 		{5E337EB7-85E8-4B8B-BA28-5B1541F4FE68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E337EB7-85E8-4B8B-BA28-5B1541F4FE68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E337EB7-85E8-4B8B-BA28-5B1541F4FE68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3641674F-D6C3-48E3-A575-5B632A9CFD1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3641674F-D6C3-48E3-A575-5B632A9CFD1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3641674F-D6C3-48E3-A575-5B632A9CFD1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3641674F-D6C3-48E3-A575-5B632A9CFD1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
