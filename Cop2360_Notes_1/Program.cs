@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using NWFCampaignLib;
 
 namespace Cop2360_Notes_1 {
 	class Program {
@@ -78,6 +79,10 @@ namespace Cop2360_Notes_1 {
 				}
 
 				int intBreakpoint = 0;
+
+				/* Make a list of our new Contibution Objects */
+				List <Contribution> listOfLocalContributions = new List<Contribution>();
+
 				foreach(OrderedDictionary row in listOrdicRows) {
 					/*Console.WriteLine("|" + row["contributor_name"].ToString().PadLeft(intMaxLengthColumn1) + "|" + row["amount"].ToString().PadLeft(intMaxLengthColumn2) + "|" + row["candidate_committee"].ToString().PadRight(intMaxLengthColumn3) + "|");*/
 					intBreakpoint++;
@@ -90,11 +95,22 @@ namespace Cop2360_Notes_1 {
 					arrayStringOutput[2] = row["candidate_committee"].ToString();
 					Console.Write(BreakLineIntoTwo(arrayStringOutput, 35));
 
+					/* Piggy-Backing on our For Loop to Create Objects */
+					try {
+						listOfLocalContributions.Add(new Contribution(
+							row["amount"].ToString(),
+							row["contributor_name"].ToString(),
+							row["typ"].ToString(),
+							row["date"].ToString()));
+					}
+					catch(Exception e) {
+						Console.WriteLine("OH NOES");
+					}
 				}
 
 				// FORGIVE ME FOR HARDCODING (WE ARE RUNNING OUT OF TIME
-				
 
+				Contribution example = listOfLocalContributions[345];
 				Console.WriteLine("End");
 				/* End data use example */
 
