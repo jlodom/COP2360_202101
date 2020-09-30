@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace NWFCampaignLib {
 	public class Contribution {
@@ -6,14 +7,17 @@ namespace NWFCampaignLib {
 		DateTime dtContributionDate = new DateTime();
 		Decimal decAmount = 0.00m;
 		String stringFullName = String.Empty;
-		enum ContributionType { CHECK = 1, CASH = 2, INKIND = 3, REFUND = 4, UNKNOWN = 5 };
-		ContributionType enumCotributionType = ContributionType.UNKNOWN;
+		public enum ContributionType { CHECK = 1, CASH = 2, INKIND = 3, REFUND = 4, UNKNOWN = 5 };
+		public ContributionType enumCotributionType = ContributionType.UNKNOWN;
 		String stringFullStreetAddress = String.Empty;
 		String stringFullCityStateZip = String.Empty;
 		String stringOccupation = String.Empty;
 		String stringInKindDescription = String.Empty;
+		readonly DateTime dtDefault = DateTime.Parse("01/01/2000");
+		List<String> listSimpleErrors = new List<string>();
 
 
+		/*  */
 		public Contribution(String decTempAmount, String stringTempFullName, String stringTempContributionType, String stringTempContributionDate, String stringTempFullCityStateZip = "", String stringTempFullStreetAddress = "", String stringTempCandidateCommittee = "", String stringTempOccupation = "", String stringTempInKindDescription = "") {
 
 			this.decAmount = Convert.ToDecimal(decTempAmount);
@@ -23,6 +27,10 @@ namespace NWFCampaignLib {
 			if(DateTime.TryParse(stringTempContributionDate, out dtTempContributionDate)) {
 				this.dtContributionDate = dtTempContributionDate;
 			}
+			else {
+				this.dtContributionDate = this.dtDefault;
+				listSimpleErrors.Add("We have a bad date: |" + stringTempContributionDate +  "|");
+			}
 			this.stringFullName = stringTempFullName;
 			this.stringCandidateCommittee = stringTempCandidateCommittee;
 			this.stringFullCityStateZip = stringTempFullCityStateZip;
@@ -31,25 +39,29 @@ namespace NWFCampaignLib {
 			this.stringInKindDescription = stringTempInKindDescription;
 		}
 
+		public Decimal GetAmount() {
+			return this.decAmount;
+		}
+
 		ContributionType FloridaContributionTypeToEnum(String stringType) {
+
+			ContributionType contribReturn = ContributionType.UNKNOWN;
 
 			switch(stringType) {
 				case "CHK":
-					return ContributionType.CHECK;
+					contribReturn = ContributionType.CHECK;
 					break;
 				case "CAS":
-					return ContributionType.CASH;
+					contribReturn = ContributionType.CASH;
 					break;
 				case "INK":
-					return ContributionType.INKIND;
+					contribReturn = ContributionType.INKIND;
 					break;
 				case "REF":
-					return ContributionType.REFUND;
+					contribReturn = ContributionType.REFUND;
 					break;
-				default:
-					return ContributionType.UNKNOWN;
 			}
-			return ContributionType.UNKNOWN;
+			return contribReturn;
 		}
 
 	}

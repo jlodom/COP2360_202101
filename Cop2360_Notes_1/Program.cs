@@ -17,6 +17,8 @@ namespace Cop2360_Notes_1 {
 			//String stringPathToFile = "C:\\YOURPATHGOESHERE";
 			String stringPathToFile = "/Gibbon/Odom_Life/Adjuncting/2019_Spring/cop1510/project_files/project4/gaetz.txt";
 			Console.Write("\n\n\nPROGRAM STARTS HERE\n");
+			Decimal decMaxContribution = 500.00m;
+			Decimal decSmallContributionThreshold = 100m;
 			/* Make sure the file exists before proceeding. */
 			if(File.Exists(stringPathToFile)) {
 				String stringEntireText = File.ReadAllText(stringPathToFile); /* Read the whole file into memory as a string (could go line by line. */
@@ -75,6 +77,7 @@ namespace Cop2360_Notes_1 {
 					if(row["candidate_committee"].ToString().Count() > intMaxLengthColumn3) {
 						intMaxLengthColumn3 = row["candidate_committee"].ToString().Count();
 					}
+				
 
 				}
 
@@ -101,16 +104,50 @@ namespace Cop2360_Notes_1 {
 							row["amount"].ToString(),
 							row["contributor_name"].ToString(),
 							row["typ"].ToString(),
-							row["date"].ToString()));
+							row["date"].ToString(),
+							row["city_state_zip"].ToString(),
+							row["address"].ToString(),
+							row["candidate_committee"].ToString(),
+							row["occupation"].ToString(),
+							row["inkind_desc"].ToString()));
+
 					}
 					catch(Exception e) {
 						Console.WriteLine("OH NOES");
 					}
 				}
 
-				// FORGIVE ME FOR HARDCODING (WE ARE RUNNING OUT OF TIME
 
-				Contribution example = listOfLocalContributions[345];
+				//Contribution example = listOfLocalContributions[345];
+
+
+				/* Generate some simple stats */
+				int intTotalContributions = 0;
+				int intTotalMaxContributions = 0;
+				int intTotalSmallContributions = 0;
+				Decimal decTotalAmountOfSmallContributions = 0m;
+				Decimal decAmountOfAllContributions = 0m;
+				foreach(Contribution contribution in listOfLocalContributions) {
+					if(contribution.GetAmount() == decMaxContribution) {
+						intTotalMaxContributions++;
+					}
+					else if((contribution.GetAmount() < decSmallContributionThreshold) && (contribution.enumCotributionType != Contribution.ContributionType.REFUND)) {
+						intTotalSmallContributions++;
+						decTotalAmountOfSmallContributions += contribution.GetAmount();
+					}
+					intTotalContributions++;
+					decAmountOfAllContributions += contribution.GetAmount();
+				}
+				Console.WriteLine("Total Contributions Was: " + intTotalContributions);
+				Console.WriteLine("Dollar Amount of Total Contributions Was: $" + decAmountOfAllContributions);
+				Console.WriteLine("Total Max Contributions Was: " + intTotalMaxContributions);
+				Console.WriteLine("Dollar Amount of Max Contributions Was: $" + decMaxContribution * intTotalMaxContributions);
+				Console.WriteLine("Total Small Contributions Was: " + intTotalSmallContributions);
+				Console.WriteLine("Dollar Amount of Small Contributions Was: $" + decTotalAmountOfSmallContributions);
+				for(int i = 0; i < 15; i++) {
+					Console.WriteLine(String.Empty);
+				}
+
 				Console.WriteLine("End");
 				/* End data use example */
 

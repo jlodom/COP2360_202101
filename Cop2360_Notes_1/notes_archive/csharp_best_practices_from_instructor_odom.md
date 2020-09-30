@@ -5,6 +5,8 @@
 
 2. All methods should always return, and fail safe.
 3. Exceptions should be used to fail safe and should never be unhandled.
+3A. Exceptions are not necessary if the code can simply handle all cases.
+3B. Use try blocks for stretches of code where many different things can go wrong in close proximity.
 4. Do not use var unless you really mean it. Take advantage of C#'s strong typing.
 5. Use /* Comments */ for long-term comments and // for comments you will erase later.
 6. No variable created by your program should ever be null when in use.
