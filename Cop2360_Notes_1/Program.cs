@@ -118,6 +118,45 @@ namespace Cop2360_Notes_1 {
 				}
 
 
+				/* Example Added October 27  - Get All Zip Codes from File WITHOUT Duplicates */
+
+
+				// Attempt 0 - Keep the duplicates
+				List<String> listAllZipsV0 = new List<string>();
+				foreach(Contribution contrib in listOfLocalContributions) {
+					//This line don't worry about. We are breaking apart the zip from the rest of the line.
+					String zip = contrib.GetCityStateZip().Substring(contrib.GetCityStateZip().LastIndexOf(" ") + 1);
+					listAllZipsV0.Add(zip);
+				}
+
+				// Attempt 1 - See if the data already exists in the list.
+				List<String> listAllZipsV1 = new List<string>();
+				foreach(Contribution contrib in listOfLocalContributions) {
+					//This line don't worry about. We are breaking apart the zip from the rest of the line.
+					String zip = contrib.GetCityStateZip().Substring(contrib.GetCityStateZip().LastIndexOf(" ") + 1);
+					if(!(listAllZipsV1.Contains(zip))) {
+						listAllZipsV1.Add(zip);
+					}
+				}
+
+				// Attempt 2 - Use LINQ to de-duplicate
+				List<String> listAllZipsV2 = listAllZipsV0.Distinct<String>().ToList<String>();
+
+				// Attempt 3 - Use a HashSet instead of a list (HashSets are always unique). 
+				HashSet<String> hsAllZipsV3 = new HashSet<string>();
+				foreach(Contribution contrib in listOfLocalContributions) {
+					//This line don't worry about. We are breaking apart the zip from the rest of the line.
+					String zip = contrib.GetCityStateZip().Substring(contrib.GetCityStateZip().LastIndexOf(" ") + 1);
+					hsAllZipsV3.Add(zip);
+				}
+
+
+				Console.WriteLine("End of the October 27 code.");
+
+				/* End October 27 */
+
+
+
 				//Contribution example = listOfLocalContributions[345];
 
 

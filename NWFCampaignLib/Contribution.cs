@@ -43,6 +43,10 @@ namespace NWFCampaignLib {
 			return this.decAmount;
 		}
 
+		public String GetCityStateZip() {
+			return this.stringFullCityStateZip;
+		}
+
 		ContributionType FloridaContributionTypeToEnum(String stringType) {
 
 			ContributionType contribReturn = ContributionType.UNKNOWN;
@@ -63,6 +67,7 @@ namespace NWFCampaignLib {
 			}
 			return contribReturn;
 		}
+
 
 	}
 
