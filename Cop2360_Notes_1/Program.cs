@@ -4,21 +4,56 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using Serilog;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Xml;
 using NWFCampaignLib;
 
 namespace Cop2360_Notes_1 {
 	class Program {
 		static void Main(string[] args) {
 
-			
+			/* Check how many arguments are sent to our program.
+			 * There should only be one -- the path to the configuration file
+			 * where we will get the rest of our settings. */
+			if(args.Length != 1) {
+				Console.WriteLine("This program requires one argument -- a path to a configuration file.");
+				Environment.Exit(0);
+			}
 
-			/* Fixed paths are bad, and this should be read from arguments or a config file. 
-			 * But for tonight, this will do. */
-			//String stringPathToFile = "C:\\YOURPATHGOESHERE";
-			String stringPathToFile = "/Gibbon/Odom_Life/Adjuncting/2019_Spring/cop1510/project_files/project4/gaetz.txt";
-			Console.Write("\n\n\nPROGRAM STARTS HERE\n");
-			Decimal decMaxContribution = 500.00m;
-			Decimal decSmallContributionThreshold = 100m;
+			String stringConfigurationFile = args[0];
+			if(!File.Exists(stringConfigurationFile)) {
+				Console.WriteLine("Configuration file does not exist.");
+				Environment.Exit(0);
+			}
+
+			/* Set up configuration source using a factory pattern */
+			IConfiguration configuration;
+			/* This should be in try/catch but dotnet is being grumpy. */
+			var configurationBuilder = new ConfigurationBuilder()
+					.AddXmlFile(stringConfigurationFile);
+			configuration = configurationBuilder.Build();
+
+
+			String stringPathToFile = configuration["INPUTFILE"];
+			Decimal decMaxContribution = Convert.ToDecimal(configuration["MAXCONTRIB"]);
+			Decimal decSmallContributionThreshold = Convert.ToDecimal(configuration["MINCONTRIB"]);
+			String stringPathToOutputFile = configuration["OUTPUTFILE"];
+
+
+			/* Now set up logging */
+			String stringLogPath = configuration["LOGFILEDIRECTORYPATH"] + Path.DirectorySeparatorChar + configuration["LOGFILEPREFIXNAME"] + "_{Date}.log";
+			ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+					builder.AddConsole()
+					.AddSerilog());
+			Log.Logger = new LoggerConfiguration()
+					.WriteTo.RollingFile(stringLogPath)
+					.CreateLogger();
+			Microsoft.Extensions.Logging.ILogger logger = loggerFactory.CreateLogger<Program>();
+			logger.LogInformation("Logging has begun.");
+
 			/* Make sure the file exists before proceeding. */
 			if(File.Exists(stringPathToFile)) {
 				String stringEntireText = File.ReadAllText(stringPathToFile); /* Read the whole file into memory as a string (could go line by line. */
@@ -34,7 +69,7 @@ namespace Cop2360_Notes_1 {
 					lineNumber++;
 					/* If a line is blank, do not do anything with it. */
 					if(String.IsNullOrWhiteSpace(stringLine)) {
-						Console.WriteLine("Blank Line");
+						logger.LogInformation("Blank Line");
 					}
 					else {
 						/* Create a list to holding header information if this is the first line (the header). */
@@ -87,7 +122,7 @@ namespace Cop2360_Notes_1 {
 				List <Contribution> listOfLocalContributions = new List<Contribution>();
 
 				foreach(OrderedDictionary row in listOrdicRows) {
-					/*Console.WriteLine("|" + row["contributor_name"].ToString().PadLeft(intMaxLengthColumn1) + "|" + row["amount"].ToString().PadLeft(intMaxLengthColumn2) + "|" + row["candidate_committee"].ToString().PadRight(intMaxLengthColumn3) + "|");*/
+					/*logger.LogInformation("|" + row["contributor_name"].ToString().PadLeft(intMaxLengthColumn1) + "|" + row["amount"].ToString().PadLeft(intMaxLengthColumn2) + "|" + row["candidate_committee"].ToString().PadRight(intMaxLengthColumn3) + "|");*/
 					intBreakpoint++;
 					if(intBreakpoint%20 == 0) {
 						Console.Write("");
@@ -113,7 +148,7 @@ namespace Cop2360_Notes_1 {
 
 					}
 					catch(Exception e) {
-						Console.WriteLine("OH NOES");
+						logger.LogInformation("OH NOES");
 					}
 				}
 
@@ -151,7 +186,7 @@ namespace Cop2360_Notes_1 {
 				}
 
 
-				Console.WriteLine("End of the October 27 code.");
+				logger.LogInformation("End of the October 27 code.");
 
 				/* End October 27 */
 
@@ -177,22 +212,22 @@ namespace Cop2360_Notes_1 {
 					intTotalContributions++;
 					decAmountOfAllContributions += contribution.GetAmount();
 				}
-				Console.WriteLine("Total Contributions Was: " + intTotalContributions);
-				Console.WriteLine("Dollar Amount of Total Contributions Was: $" + decAmountOfAllContributions);
-				Console.WriteLine("Total Max Contributions Was: " + intTotalMaxContributions);
-				Console.WriteLine("Dollar Amount of Max Contributions Was: $" + decMaxContribution * intTotalMaxContributions);
-				Console.WriteLine("Total Small Contributions Was: " + intTotalSmallContributions);
-				Console.WriteLine("Dollar Amount of Small Contributions Was: $" + decTotalAmountOfSmallContributions);
+				logger.LogInformation("Total Contributions Was: " + intTotalContributions);
+				logger.LogInformation("Dollar Amount of Total Contributions Was: $" + decAmountOfAllContributions);
+				logger.LogInformation("Total Max Contributions Was: " + intTotalMaxContributions);
+				logger.LogInformation("Dollar Amount of Max Contributions Was: $" + decMaxContribution * intTotalMaxContributions);
+				logger.LogInformation("Total Small Contributions Was: " + intTotalSmallContributions);
+				logger.LogInformation("Dollar Amount of Small Contributions Was: $" + decTotalAmountOfSmallContributions);
 				for(int i = 0; i < 15; i++) {
-					Console.WriteLine(String.Empty);
+					logger.LogInformation(String.Empty);
 				}
 
-				Console.WriteLine("End");
+				logger.LogInformation("End");
 				/* End data use example */
 
 			}
 			else {
-				Console.WriteLine("Could not find file: " + stringPathToFile);
+				logger.LogInformation("Could not find file: " + stringPathToFile);
 			}
 
 
@@ -205,7 +240,7 @@ namespace Cop2360_Notes_1 {
 
 			String[] arrayStringTheSplit = stringFullName.Split(" ");
 
-			Console.WriteLine(arrayStringTheSplit[1] + ", " + arrayStringTheSplit[0]);
+			logger.LogInformation(arrayStringTheSplit[1] + ", " + arrayStringTheSplit[0]);
 			*/
 		}
 

@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Every parameter we want to read into the program gets a tag. This is a comment. -->
+<SETTINGS>
+	<LOGFILEDIRECTORYPATH>/tmp/</LOGFILEDIRECTORYPATH>
+	<LOGFILEPREFIXNAME>cop2360</LOGFILEPREFIXNAME>
+	<INPUTFILE>/Gibbon/Odom_Life/Adjuncting/2019_Spring/cop1510/project_files/project4/gaetz.txt</INPUTFILE>
+	<OUTPUTFILE>/tmp/cop2360output.txt</OUTPUTFILE>
+	<MAXCONTRIB>500</MAXCONTRIB>
+	<MINCONTRIB>100</MINCONTRIB>
+</SETTINGS>
