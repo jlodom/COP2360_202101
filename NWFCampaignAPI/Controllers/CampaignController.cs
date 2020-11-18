@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Specialized;
 using System.IO;
+using Newtonsoft.Json;
 using NWFCampaignLib;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -12,6 +13,18 @@ using NWFCampaignLib;
 namespace NWFCampaignAPI {
 	[Route("api/[controller]")]
 	public class CampaignController : Controller {
+
+		[HttpGet("/hint/{printme}")]
+		public String BigOlHint(String printme) {
+			String stringArrayCell = printme;
+			String[] stringArray = new String[100];
+			for(int i = 0; i < 100; i++) {
+				stringArray[i] = stringArrayCell;
+			}
+			String stringJSONArray = JsonConvert.SerializeObject(stringArray);
+			return stringJSONArray;
+
+		}
 
 		/* Return Some of the info from our CLI program. */
 		[HttpGet("/campaign/basicinfo")]

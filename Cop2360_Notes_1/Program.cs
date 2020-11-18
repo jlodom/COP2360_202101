@@ -10,6 +10,9 @@ using Serilog;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Xml;
 using NWFCampaignLib;
+using System.Xml;
+using System.Text; /* Needed for XML UTF-8 */
+using System.Dynamic;
 
 namespace Cop2360_Notes_1 {
 	class Program {
@@ -184,6 +187,52 @@ namespace Cop2360_Notes_1 {
 					String zip = contrib.GetCityStateZip().Substring(contrib.GetCityStateZip().LastIndexOf(" ") + 1);
 					hsAllZipsV3.Add(zip);
 				}
+
+
+				/* Dark Experiments with XML. We are going to turn our cotribution pieces into XML. */
+				/* Put in some XML formatting settings just to make it look nice. */
+				logger.LogInformation("Starting to write an xml file.");
+				XmlWriterSettings xmlFileSettings = new XmlWriterSettings();
+				xmlFileSettings.Indent = true;
+				/* Could also be set to Environment.Newline but right now we want it always outputting Windows format. */
+				xmlFileSettings.NewLineChars = "\r\n";
+				xmlFileSettings.NewLineOnAttributes = true;
+				xmlFileSettings.WriteEndDocumentOnClose = true;
+				xmlFileSettings.Encoding = new UTF8Encoding(false); /* Try to keep everything UTF-8 without BOM. */
+
+				/* CreateInstanceBinder XMLWriter and set up */
+				XmlWriter xmlWriterContrib = XmlWriter.Create("anotherexample.xml", xmlFileSettings);
+				xmlWriterContrib.WriteStartDocument();
+
+				/* Structure some data so that we can unroll it into our XML file. */
+				Dictionary<String, List<decimal>> dicZipAmounts = new Dictionary<string, List<decimal>>();
+				foreach(Contribution xmlContrib in listOfLocalContributions) {
+					String zip = xmlContrib.GetCityStateZip().Substring(xmlContrib.GetCityStateZip().LastIndexOf(" ") + 1);
+					if(!dicZipAmounts.ContainsKey(zip)) {
+						dicZipAmounts.Add(zip, new List<decimal>());
+					}
+					dicZipAmounts[zip].Add(xmlContrib.GetAmount());
+				}
+
+				/* Create the nodes of the XML tree. */
+				xmlWriterContrib.WriteStartElement("CONTRIBUTIONS");
+				foreach(KeyValuePair<String, List<decimal>> kvp in dicZipAmounts) {
+					xmlWriterContrib.WriteStartElement("ZIP");
+					xmlWriterContrib.WriteAttributeString("code", kvp.Key);
+					foreach(decimal damount in kvp.Value) {
+						xmlWriterContrib.WriteElementString("AMOUNT", damount.ToString());
+					}
+					xmlWriterContrib.WriteEndElement();
+				}
+				xmlWriterContrib.WriteEndElement();
+				xmlWriterContrib.WriteEndDocument();
+				xmlWriterContrib.Flush();
+				xmlWriterContrib.Close();
+
+				XmlDocument xmlreload = new XmlDocument();
+				xmlreload.Load("anotherexample.xml");
+
+				logger.LogInformation("End XML.");
 
 
 				logger.LogInformation("End of the October 27 code.");
