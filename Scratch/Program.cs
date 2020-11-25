@@ -1,10 +1,22 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Net;
+using System.Threading;
+using System.Text.Json;
 
 namespace Scratch {
 	class Program {
 		static void Main(string[] args) {
+
+			/* 20201124 Example of debugging one program while running WebAPI separate. */
+			WebClient wcScratch = new WebClient();
+			String stringScratchURL = "http://localhost:5000/hint/scratchexample";
+			String jsonScratch = wcScratch.DownloadString(stringScratchURL);
+			String[] stringArrayScratch = JsonSerializer.Deserialize<String[]>(jsonScratch);
+			// We could also do this:
+			// List<String> stringArrayScratch = JsonSerializer.Deserialize<List<String>>(jsonScratch);
+
 
 			/* Basic Linq Example Adapted from Book */
 
